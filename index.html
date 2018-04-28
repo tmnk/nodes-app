@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <script
+  src="http://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <!-- <button onclick="loadPhones()" id="button">Загрузить phones.json!</button> -->
+  <button onclick="pushPhones()" id="button">В даль!</button>
+
+  <script>
+    // function loadPhones() {
+    //   $.ajax({
+    //     type: "POST", //метод запроса, можно POST можно GET (если опустить, то по умолчанию GET)
+    //     url: "http://localhost:3000/articles",
+    //     dataType:"json",
+    //     data: {"data":"test", "kon":"kk@mail.ru"}, //отправим данные, если нужно
+
+    //     success: function(data) {                      //функция выполняется при удачном заверщение
+    //       console.log(data[0].test2.test2_in);        //выведем в консоль содержимое test1
+    //     //console.log($.parseJSON(data).test2.test2_in); //выведем в консоль содержимое test2_in
+    //     },           
+    //     error:function (data) {
+    //           console.log( data[0].test2.test2_in );
+    //       }
+    //   });
+    // }    
+    function pushPhones() {
+      var JsonData = {
+        "test1":"value1",
+        "test2":{
+             "test2_in":"internal value test2"
+        }
+      }; 
+      var SendXhr = function(xhr) {
+          xhr.setRequestHeader("content-type", "application/json; charset=utf-8");
+          xhr.setRequestHeader("access-control-allow-origin", "*");
+      };
+
+      $.ajax({
+          url:"http://localhost:3000/articles?data=home&gogo=child",
+          type:'POST',
+          // headers: {"access-control-allow-origin", "*" },
+          dataType:"json",
+          // data: {"data":"gg"},
+          success: function(data) {
+            console.log(data[0].test2.test2_in);
+          },
+          error:function (data) {
+              console.log( data );
+          },
+           // beforeSend : SendXhr
+      });
+    }
+  </script>
+
+</body>
+
+</html>
