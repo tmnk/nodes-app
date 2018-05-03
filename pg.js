@@ -7,8 +7,8 @@ var connection = mysql.createConnection({
 });
 
 connection.connect();
-
-connection.query('SELECT * FROM user', function (error, results, fields) {
+var id = 1;
+connection.query(`SELECT one, two, whom, body, date from friends, chat where friends.id = chat.friendsID and ((one != ${id} and two = ${id}) or (one = ${id} and two != ${id}))`, function (error, results, fields) {
   if (error) throw error;
   console.log('The solution is: ', results);
 });
