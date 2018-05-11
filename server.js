@@ -11,31 +11,63 @@ var connection = mysql.createConnection({
 });
 
 connection.connect();
-
+function randomInteger(min = 1000, max = 9900000) {
+    var rand = min - 0.5 + Math.random() * (max - min + 1)
+    rand = Math.round(rand);
+    return rand;
+  }
 
 app.set('port', process.env.PORT || 3000);
 
-
-app.post('/articles', (req, res, next) => {
-	var gg = [{
-	   "test1":"value1",
-	   "test2":{
-	      "test2_in":"internal value test2"
-	    }
-	}];
+app.post('/addMess', (req, res, next) => {
+	var gg = {
+	};
 	var url = require("url");
-	// var parts = url.parse(req.url, true);
-	// console.log(arts.query.data)
 	var tmp = {}
 	req.url.split("?")[1].split('&').forEach(ar => tmp[ar.split('=')[0]] = ar.split('=')[1]);
-
+	console.log(tmp)
+	connection.query(`INSERT INTO chat(friendsID, body, date, whom) VALUES ((select id from friends where one = ${tmp.one} and two = ${tmp.two}),${tmp.body},NOW(),0)`, function (error, results, fields) {
+		  if (error) throw error;
+		});
+	console.log("mess send")
+	res.setHeader("access-control-allow-origin", "*")
+	res.send(JSON.stringify({"update" : 1}));
+});
+app.post('/upTask', (req, res, next) => {
+	var gg = {
+	};
+	var url = require("url");
+	var tmp = {}
+	req.url.split("?")[1].split('&').forEach(ar => tmp[ar.split('=')[0]] = ar.split('=')[1]);
+	console.log(tmp)
+	connection.query(`UPDATE task SET status=${tmp.status},pbl=${tmp.pbl} WHERE id = ${tmp.id}`, function (error, results, fields) {
+		  if (error) throw error;
+		});
+	console.log("update create")
+	res.setHeader("access-control-allow-origin", "*")
+	res.send(JSON.stringify({"update" : 1}));
+});
+app.post('/newTask', (req, res, next) => {
+	var gg = {
+	};
+	var url = require("url");
+	var tmp = {}
+	req.url.split("?")[1].split('&').forEach(ar => tmp[ar.split('=')[0]] = ar.split('=')[1]);
+	let randId = randomInteger();
+	connection.query(`INSERT INTO taskUser(userID, taskID) VALUES (${parseInt(tmp.id)},${randId});`, function (error, results, fields) {
+		  if (error) throw error;
+		});
+		  console.log(`INSERT INTO task(id, body, status, date, pbl) VALUES (${randId},${tmp.body},0,NOW(),0)`)
+		  connection.query(`INSERT INTO task(id, body, status, date, pbl) VALUES (${randId},"${tmp.body}",0,NOW(),0)`, function (error, results, fields) {
+		  	if (error) throw error;
+		  	console.log("add task")
+		  })
 	console.log(tmp)
 	res.setHeader("access-control-allow-origin", "*")
-	res.send(JSON.stringify(gg));
+	res.send(JSON.stringify({"insert" : 1}));
 });
 app.post('/login', (req, response, next) => {
 	var gg = {
-	   "auth":"complete"
 	};
 	var url = require("url");
 	var tmp = {}
@@ -71,7 +103,7 @@ app.post('/login', (req, response, next) => {
 					var friendList = res.map((el) => {
 						if (gg[el.id]) {
 							console.log
-							gg[el.id].tasks.push({"id" : el.taskId, "status": el.status, "text" : el.body})
+							gg[el.id].tasks.push({"id" : el.taskId, "status": el.status, "text" : el.body, "pbl" : el.pbl})
 						}
 						else {
 							gg[el.id] = {
@@ -101,7 +133,7 @@ app.post('/login', (req, response, next) => {
 			})	
 
 		}
-		connection.end();
+		// connection.end();
 	});
 
 });

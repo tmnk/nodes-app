@@ -8,8 +8,8 @@ var connection = mysql.createConnection({
 
 connection.connect();
 var id = 1;
-connection.query(`SELECT one, two, whom, body, date from friends, chat where friends.id = chat.friendsID and ((one != ${id} and two = ${id}) or (one = ${id} and two != ${id}))`, function (error, results, fields) {
+connection.query(`Call Stats (1)`, function (error, results, fields) {
   if (error) throw error;
-  console.log('The solution is: ', results);
+  console.log(results[0][0]["(SELECT count(id) from task, taskUser where NameId = taskUser.userID and taskUser.taskID = task.id and task.status = 1) / (SELECT count(id) from task, taskUser where NameId = taskUser.userID and taskUser.taskID = task.id)"])
 });
 connection.end();
